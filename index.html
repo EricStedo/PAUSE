@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAUSE - Reframing Quotidien</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Section de bienvenue */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid #4ecdc4;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .status-badge.on-duty {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        /* Carte de l'exercice du jour */
+        .daily-exercise-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .exercise-title {
+            font-size: 1.8em;
+            color: #4ecdc4;
+        }
+
+        .exercise-duration {
+            background: rgba(78, 205, 196, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        /* Situation à reframer */
+        .situation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .situation-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .situation-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Zone de reframing */
+        .reframing-zone {
+            margin-top: 25px;
+        }
+
+        .reframing-prompt {
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .reframing-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .reframe-option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .reframe-option:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+            border-color: #4ecdc4;
+        }
+
+        .reframe-option.selected {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+        }
+
+        .reframe-option.selected::after {
+            content: '✓';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4ecdc4;
+            font-size: 1.5em;
+        }
+
+        .option-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        /* Zone de réflexion personnelle */
+        .reflection-zone {
+            margin-top: 25px;
+        }
+
+        .reflection-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .reflection-textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .reflection-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Boutons d'action */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Indicateurs de progression */
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 30px 0;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #4ecdc4;
+            transform: scale(1.3);
+        }
+
+        .progress-dot.completed {
+            background: #45b7d1;
+        }
+
+        /* Section de feedback */
+        .feedback-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .feedback-section.show {
+            display: block;
+        }
+
+        .feedback-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feedback-message {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .feedback-submessage {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Stats de la semaine */
+        .weekly-stats {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        /* Modal pour guide */
+        .guide-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .guide-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .guide-content h2 {
+            color: #4ecdc4;
+            margin-bottom: 20px;
+        }
+
+        .guide-content h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .guide-content p, .guide-content li {
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .guide-content ul {
+            padding-left: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .exercise-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ PAUSE</h1>
+        <p>Reframing Quotidien - Sûreté & Résilience</p>
+    </div>
+
+    <div class="main-content">
+        <!-- Section de bienvenue avec statut -->
+        <div class="welcome-section">
+            <div class="status-badge" id="statusBadge">
+                <span id="statusText">Hors Service</span>
+            </div>
+            <h2 id="welcomeMessage">Bonjour, Agent</h2>
+            <p style="opacity: 0.8;">Exercice du <span id="currentDate"></span></p>
+        </div>
+
+        <!-- Carte de l'exercice du jour -->
+        <div class="daily-exercise-card">
+            <div class="exercise-header">
+                <h2 class="exercise-title">Reframing du Jour</h2>
+                <span class="exercise-duration">⏱️ 5-8 min</span>
+            </div>
+
+            <!-- Situation à reframer -->
+            <div class="situation-card">
+                <div class="situation-label">Situation Fréquente</div>
+                <div class="situation-text" id="dailySituation">
+                    "J'ai laissé passer quelque chose d'important. Je ne suis pas assez vigilant."
+                </div>
+            </div>
+
+            <!-- Zone de reframing -->
+            <div class="reframing-zone">
+                <div class="reframing-prompt">
+                    <div class="situation-label">Question de Réflexion</div>
+                    <p>Comment pourriez-vous reformuler cette pensée de manière plus constructive et réaliste ?</p>
+                </div>
+
+                <div class="reframing-options" id="reframingOptions">
+                    <div class="reframe-option" onclick="selectOption(this, 0)">
+                        <span class="option-number">1</span>
+                        <span id="option1">J'ai géré 99% des situations correctement aujourd'hui. Un incident ne définit pas ma compétence.</span>
+                    </div>
+                    <div class="reframe-option" onclick="selectOption(this, 1)">
+                        <span class="option-number">2</span>
+                        <span id="option2">Cette expérience est une opportunité d'apprentissage qui me rendra plus efficace demain.</span>
+                    </div>
+                    <div class="reframe-option" onclick="selectOption(this, 2)">
+                        <span class="option-number">3</span>
+                        <span id="option3">La perfection n'existe pas en sûreté. L'important est ma capacité à m'adapter et à réagir.</span>
+                    </div>
+                </div>
+
+                <!-- Zone de réflexion personnelle -->
+                <div class="reflection-zone">
+                    <div class="situation-label">Votre Reformulation Personnelle</div>
+                    <textarea 
+                        class="reflection-textarea" 
+                        id="personalReflection"
+                        placeholder="Écrivez votre propre façon de reformuler cette situation... (optionnel)"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="skipExercise()">
+                    Passer pour aujourd'hui
+                </button>
+                <button class="btn btn-primary" id="validateBtn" onclick="validateExercise()">
+                    Valider mon reframing
+                </button>
+            </div>
+        </div>
+
+        <!-- Indicateurs de progression de la semaine -->
+        <div class="progress-indicator">
+            <div class="progress-dot completed"></div>
+            <div class="progress-dot completed"></div>
+            <div class="progress-dot active"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+
+        <!-- Section de feedback -->
+        <div class="feedback-section" id="feedbackSection">
+            <div class="feedback-icon">🎯</div>
+            <div class="feedback-message">Excellent travail !</div>
+            <div class="feedback-submessage">
+                Vous développez votre flexibilité mentale. C'est un atout majeur en situation opérationnelle.
+            </div>
+        </div>
+
+        <!-- Stats de la semaine -->
+        <div class="weekly-stats">
+            <div class="stat-item">
+                <div class="stat-number" id="streakCount">3</div>
+                <div class="stat-label">Jours consécutifs</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalReframed">21</div>
+                <div class="stat-label">Situations reframées</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="resilienceScore">72%</div>
+                <div class="stat-label">Score résilience</div>
+            </div>
+        </div>
+
+        <!-- Bouton Guide -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-secondary" onclick="showGuide()">
+                📖 Guide du Reframing
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Guide -->
+    <div class="guide-modal" id="guideModal">
+        <div class="guide-content">
+            <span class="close-btn" onclick="closeGuide()">✕</span>
+            <h2>Guide du Reframing Narratif</h2>
+            
+            <h3>Qu'est-ce que le reframing ?</h3>
+            <p>Le reframing consiste à reformuler vos pensées automatiques négatives en perspectives plus équilibrées et constructives. C'est une compétence essentielle pour maintenir votre résilience mentale.</p>
+            
+            <h3>Pourquoi c'est important en sûreté ?</h3>
+            <ul>
+                <li>Réduit le stress post-incident</li>
+                <li>Améliore la prise de décision sous pression</li>
+                <li>Prévient l'épuisement professionnel</li>
+                <li>Renforce la confiance en vos capacités</li>
+            </ul>
+            
+            <h3>Comment faire un bon reframing ?</h3>
+            <p><strong>1. Identifiez la pensée négative</strong><br>
+            Remarquez les formulations absolues : "toujours", "jamais", "je suis nul"</p>
+            
+            <p><strong>2. Questionnez sa validité</strong><br>
+            Est-ce vraiment 100% vrai ? Quelles sont les preuves contre ?</p>
+            
+            <p><strong>3. Trouvez une alternative réaliste</strong><br>
+            Pas trop positive, mais équilibrée et basée sur les faits</p>
+            
+            <p><strong>4. Intégrez l'apprentissage</strong><br>
+            Qu'est-ce que cette situation m'apprend pour l'avenir ?</p>
+            
+            <h3>Exemples spécifiques sûreté</h3>
+            <p><strong>❌ Pensée limitante :</strong> "J'ai raté cette vérification"<br>
+            <strong>✅ Reframing :</strong> "J'ai effectué 200 vérifications cette semaine, j'ajusterai ma méthode pour celle-ci"</p>
+            
+            <p><strong>❌ Pensée limitante :</strong> "Je devrais pouvoir tout contrôler"<br>
+            <strong>✅ Reframing :</strong> "Je gère efficacement ce qui est dans mon périmètre de contrôle"</p>
+        </div>
+    </div>
+
+    <script>
+        // Base de données des situations quotidiennes pour professionnels de sûreté
+        const dailySituations = [
+            {
+                situation: "J'ai laissé passer quelque chose d'important. Je ne suis pas assez vigilant.",
+                options: [
+                    "J'ai géré 99% des situations correctement aujourd'hui. Un incident ne définit pas ma compétence.",
+                    "Cette expérience est une opportunité d'apprentissage qui me rendra plus efficace demain.",
+                    "La perfection n'existe pas en sûreté. L'important est ma capacité à m'adapter et à réagir."
+                ],
+                reflection: "Comment cette expérience peut-elle améliorer mes procédures ?"
+            },
+            {
+                situation: "L'incident s'est produit malgré ma présence. J'ai échoué dans ma mission.",
+                options: [
+                    "Ma présence a limité l'impact de l'incident. Sans moi, les conséquences auraient été pires.",
+                    "J'ai réagi selon les protocoles. Le risque zéro n'existe pas, mais j'ai minimisé les dégâts.",
+                    "Cet incident me permet d'identifier des vulnérabilités pour mieux protéger à l'avenir."
+                ],
+                reflection: "Qu'est-ce que j'ai bien fait pendant cet incident ?"
+            },
+            {
+                situation: "Je suis arrivé en retard à mon poste. Je suis un mauvais professionnel.",
+                options: [
+                    "Un retard ponctuel ne définit pas mon professionnalisme. Ma ponctualité habituelle compte plus.",
+                    "J'ai prévenu et géré la situation. C'est ça être responsable face à l'imprévu.",
+                    "Cet événement me rappelle l'importance de prévoir des marges. Je m'adapterai pour demain."
+                ],
+                reflection: "Quelles solutions puis-je mettre en place pour éviter que cela se reproduise ?"
+            },
+            {
+                situation: "Mon supérieur m'a parlé sèchement. Il doit me prendre pour un incompétent.",
+                options: [
+                    "Son ton reflète peut-être son stress, pas mon travail. Je ne prends pas ça personnellement.",
+                    "Une remarque difficile ne remet pas en cause l'ensemble de mes compétences professionnelles.",
+                    "C'est l'occasion d'un dialogue constructif pour améliorer notre communication."
+                ],
+                reflection: "Comment puis-je transformer cette tension en opportunité d'amélioration ?"
+            },
+            {
+                situation: "J'en ai marre de ce poste. Je tourne en rond et ça ne sert à rien.",
+                options: [
+                    "Cette routine me permet de maîtriser parfaitement mon environnement. C'est une force.",
+                    "Ma présence constante crée un sentiment de sécurité. C'est invisible mais essentiel.",
+                    "Ce sentiment est temporaire. Je peux donner du sens à mon poste en variant mes approches."
+                ],
+                reflection: "Qu'est-ce que je pourrais faire différemment pour retrouver de l'intérêt ?"
+            },
+            {
+                situation: "Les collègues doivent parler dans mon dos. Je sens qu'ils me jugent.",
+                options: [
+                    "Mes suppositions ne sont pas des faits. Je n'ai aucune preuve concrète de ces jugements.",
+                    "Ce que les autres pensent ne définit pas ma valeur professionnelle ni personnelle.",
+                    "Si j'ai des doutes, je peux clarifier directement plutôt que d'imaginer le pire."
+                ],
+                reflection: "Sur quoi est-ce que je base réellement cette impression ?"
+            },
+            {
+                situation: "Je suis trop jeune pour ce poste. Personne ne me prend au sérieux.",
+                options: [
+                    "Ma jeunesse apporte énergie et idées nouvelles. C'est un atout pour l'équipe.",
+                    "J'ai été choisi pour mes compétences, pas mon âge. Ma légitimité vient de mon travail.",
+                    "Chaque jour, je gagne en expérience. Mon âge est temporaire, mes compétences sont durables."
+                ],
+                reflection: "Quelles sont mes forces uniques que mon âge me permet d'avoir ?"
+            },
+            {
+                situation: "Je suis trop vieux pour ce poste. Les jeunes sont plus performants que moi.",
+                options: [
+                    "Mon expérience est irremplaçable. J'ai des réflexes et une intuition que seul le temps apporte.",
+                    "J'apporte stabilité et sagesse à l'équipe. C'est complémentaire à l'énergie des plus jeunes.",
+                    "L'âge n'est qu'un nombre. Ma forme physique et mentale, c'est moi qui les entretiens."
+                ],
+                reflection: "Comment mon expérience me rend-elle plus efficace qu'avant ?"
+            },
+            {
+                situation: "Je suis épuisé. Je n'ai plus la force de continuer comme ça.",
+                options: [
+                    "La fatigue est un signal de mon corps. L'écouter, c'est préserver ma capacité à long terme.",
+                    "Je peux demander de l'aide ou ajuster mon rythme. C'est professionnel, pas faible.",
+                    "Cette fatigue est temporaire. Avec du repos, je retrouverai mon énergie."
+                ],
+                reflection: "De quoi ai-je vraiment besoin pour récupérer ?"
+            },
+            {
+                situation: "Qu'est-ce que je fais là ? Ce métier n'a plus de sens pour moi.",
+                options: [
+                    "Cette remise en question est normale et saine. Elle peut me mener vers un renouveau.",
+                    "Je peux redonner du sens en me rappelant pourquoi j'ai choisi ce métier au départ.",
+                    "C'est peut-être le moment d'évoluer dans ma pratique, pas forcément de tout quitter."
+                ],
+                reflection: "Qu'est-ce qui me motivait au début et comment le retrouver ?"
+            },
+            {
+                situation: "Je n'arrive pas à déconnecter du travail. Je pense constamment aux risques.",
+                options: [
+                    "Ma vigilance au travail est un atout. Je peux choisir quand l'activer et quand me reposer.",
+                    "Me reposer fait partie de ma préparation opérationnelle. Un agent reposé est plus efficace.",
+                    "Je peux être un excellent professionnel sans sacrifier mon bien-être personnel."
+                ],
+                reflection: "Quel rituel pourrait m'aider à marquer la transition travail/repos ?"
+            },
+            {
+                situation: "Encore une journée où il ne s'est rien passé. Mon travail est inutile.",
+                options: [
+                    "Une journée calme est une journée réussie. C'est le but ultime de la prévention.",
+                    "Mon travail dissuasif fonctionne. L'absence d'incident est ma plus belle réussite.",
+                    "Chaque jour calme me permet de perfectionner mes compétences pour les moments critiques."
+                ],
+                reflection: "Comment puis-je mesurer ma réussite autrement que par les incidents ?"
+            },
+            {
+                situation: "J'ai fait une erreur de procédure. Je vais me faire virer.",
+                options: [
+                    "Une erreur ne définit pas ma carrière. C'est ma réaction qui compte maintenant.",
+                    "Tout le monde fait des erreurs. L'important est d'être transparent et d'apprendre.",
+                    "Cette erreur me rendra plus vigilant. C'est un investissement dans ma compétence future."
+                ],
+                reflection: "Quelle est la vraie gravité de cette erreur et comment la corriger ?"
+            },
+            {
+                situation: "Les gens que je protège ne me respectent pas. Je perds mon temps.",
+                options: [
+                    "Leur comportement ne diminue pas la valeur de ma mission de protection.",
+                    "Je ne fais pas ce métier pour la gratitude mais pour la sécurité de tous.",
+                    "Mon professionnalisme reste constant, indépendamment des attitudes des autres."
+                ],
+                reflection: "Pourquoi ai-je choisi ce métier et qu'est-ce qui m'y tient ?"
+            },
+            {
+                situation: "Mon collègue a eu une promotion et pas moi. Je ne vaux rien.",
+                options: [
+                    "Sa promotion ne diminue pas mes compétences. Nos parcours sont différents.",
+                    "Mon tour viendra. Je continue à progresser à mon rythme.",
+                    "C'est l'occasion de demander du feedback pour comprendre comment progresser."
+                ],
+                reflection: "Qu'est-ce que je peux faire concrètement pour mon évolution ?"
+            },
+            {
+                situation: "J'ai eu un différend avec un collègue. L'ambiance va être pourrie maintenant.",
+                options: [
+                    "Un désaccord ponctuel ne détruit pas une relation de travail. On peut le dépasser.",
+                    "Les conflits font partie du travail en équipe. C'est en les résolvant qu'on se renforce.",
+                    "Je peux prendre l'initiative de clarifier la situation pour avancer."
+                ],
+                reflection: "Comment puis-je transformer ce conflit en amélioration de notre collaboration ?"
+            },
+            {
+                situation: "Je n'ai pas les codes de ce milieu. Je ne serai jamais vraiment intégré.",
+                options: [
+                    "Ma différence apporte une perspective unique et enrichit l'équipe.",
+                    "L'intégration prend du temps. Chaque jour, je comprends mieux cet environnement.",
+                    "Je n'ai pas besoin d'être comme les autres pour être un bon professionnel."
+                ],
+                reflection: "Quels sont mes atouts uniques dans cet environnement ?"
+            },
+            {
+                situation: "Cette formation ne sert à rien. C'est du temps perdu.",
+                options: [
+                    "Même si tout n'est pas applicable, il y a toujours quelque chose à en retirer.",
+                    "C'est un moment de respiration dans mon quotidien. C'est déjà ça de gagné.",
+                    "Je peux utiliser ce temps pour réfléchir à ma pratique sous un autre angle."
+                ],
+                reflection: "Comment puis-je rendre ce moment utile pour moi ?"
+            },
+            {
+                situation: "Je stresse pour tout et n'importe quoi. Je ne suis pas fait pour ce métier.",
+                options: [
+                    "Le stress montre que je prends mon travail au sérieux. C'est une forme d'engagement.",
+                    "Je peux apprendre à gérer mon stress. C'est une compétence qui se développe.",
+                    "Beaucoup d'excellents professionnels sont stressés. Ça ne m'empêche pas d'être compétent."
+                ],
+                reflection: "Qu'est-ce qui déclenche vraiment mon stress et comment y répondre ?"
+            },
+            {
+                situation: "Ma famille ne comprend pas mes horaires. Je les déçois constamment.",
+                options: [
+                    "Je fais de mon mieux pour équilibrer travail et famille. C'est déjà beaucoup.",
+                    "Mon travail protège aussi ma famille indirectement. C'est une forme d'amour.",
+                    "Je peux communiquer mieux sur l'importance de mon rôle et chercher des compromis."
+                ],
+                reflection: "Comment mieux faire comprendre mes contraintes tout en étant présent ?"
+            },
+            {
+                situation: "J'ai pris du poids. Je ne suis plus opérationnel comme avant.",
+                options: [
+                    "Mon efficacité ne se résume pas à mon apparence physique. J'ai d'autres atouts.",
+                    "C'est un signal pour prendre soin de moi. Je peux agir progressivement.",
+                    "Beaucoup de facteurs influent sur le poids. Je ne me réduis pas à ça."
+                ],
+                reflection: "Quelles petites actions puis-je mettre en place pour ma santé ?"
+            },
+            {
+                situation: "Je n'ai rien fait d'exceptionnel dans ma carrière. Je suis médiocre.",
+                options: [
+                    "L'exceptionnel, c'est la constance quotidienne. C'est exactement ce que je fais.",
+                    "Chaque jour de service rendu est exceptionnel pour ceux que je protège.",
+                    "Ma carrière n'est pas finie. Je peux encore créer des moments marquants."
+                ],
+                reflection: "Qu'est-ce qui compte vraiment dans la définition du succès pour moi ?"
+            },
+            {
+                situation: "Les nouvelles technologies me dépassent. Je deviens obsolète.",
+                options: [
+                    "Je peux apprendre à mon rythme. L'expérience humaine reste irremplaçable.",
+                    "Les technologies sont des outils. Mon jugement et mon intuition restent essentiels.",
+                    "C'est l'occasion d'apprendre et de rester pertinent dans mon domaine."
+                ],
+                reflection: "Quelle technologie pourrait vraiment m'aider si je prenais le temps de la maîtriser ?"
+            },
+            {
+                situation: "J'ai craqué émotionnellement devant l'équipe. Ma crédibilité est foutue.",
+                options: [
+                    "Montrer ses émotions, c'est humain. Ça peut même renforcer les liens d'équipe.",
+                    "Ma vulnérabilité peut encourager d'autres à demander de l'aide quand ils en ont besoin.",
+                    "Un moment de fragilité ne définit pas des années de professionnalisme."
+                ],
+                reflection: "Comment transformer ce moment de vulnérabilité en force pour l'équipe ?"
+            },
+            {
+                situation: "Je fais toujours les mêmes rondes. Ma vie est une boucle sans fin.",
+                options: [
+                    "La répétition crée l'expertise. Je deviens meilleur à chaque passage.",
+                    "Cette routine me libère l'esprit pour observer des détails que d'autres manqueraient.",
+                    "Je peux varier mon approche mentale même si le parcours reste le même."
+                ],
+                reflection: "Comment puis-je apporter de la nouveauté dans ma routine ?"
+            },
+            {
+                situation: "Personne ne remarque quand je fais du bon travail. Seules les erreurs comptent.",
+                options: [
+                    "Je ne travaille pas pour la reconnaissance mais pour ma satisfaction personnelle.",
+                    "L'absence de remarques négatives est déjà une forme de reconnaissance.",
+                    "Je peux documenter mes réussites pour ma propre valorisation."
+                ],
+                reflection: "Comment puis-je célébrer mes propres réussites ?"
+            },
+            {
+                situation: "J'ai peur de perdre mon emploi avec toutes ces restructurations.",
+                options: [
+                    "Mon expérience et mes compétences ont de la valeur, ici ou ailleurs.",
+                    "L'inquiétude ne change pas l'avenir. Je me concentre sur ce que je contrôle.",
+                    "C'est peut-être l'occasion de développer de nouvelles compétences."
+                ],
+                reflection: "Qu'est-ce que je peux faire aujourd'hui pour sécuriser mon avenir ?"
+            },
+            {
+                situation: "Je ne supporte plus l'uniforme. J'ai l'impression de perdre mon identité.",
+                options: [
+                    "L'uniforme ne me définit pas. Je reste moi-même dessous.",
+                    "Porter l'uniforme, c'est représenter quelque chose de plus grand que moi.",
+                    "Je peux exprimer ma personnalité dans ma façon de faire mon travail."
+                ],
+                reflection: "Comment puis-je maintenir mon individualité dans ce cadre ?"
+            },
+            {
+                situation: "Les clients sont de plus en plus agressifs. Je vais finir par craquer.",
+                options: [
+                    "Leur agressivité reflète leur stress, pas ma valeur. Je reste professionnel.",
+                    "Chaque interaction difficile me rend plus résilient et expérimenté.",
+                    "Je peux développer des stratégies pour me protéger émotionnellement."
+                ],
+                reflection: "Quelles techniques puis-je utiliser pour me préserver ?"
+            },
+            {
+                situation: "Mon expertise n'est jamais écoutée. À quoi bon donner mon avis ?",
+                options: [
+                    "Je continue à partager mon expertise. Un jour, elle fera la différence.",
+                    "Je peux adapter ma façon de communiquer pour être mieux entendu.",
+                    "Mon devoir est de partager mon savoir, pas de forcer son acceptation."
+                ],
+                reflection: "Comment puis-je mieux faire passer mes messages ?"
+            }
+        ];
+
+        let selectedOptions = [];
+        let currentSituation = null;
+
+        // Initialisation
+        window.onload = function() {
+            setCurrentDate();
+            loadDailySituation();
+            updateStatus();
+            loadProgress();
+        };
+
+        function setCurrentDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('fr-FR', options);
+        }
+
+        function loadDailySituation() {
+            // Utiliser un index rotatif sur 30 jours pour parcourir toutes les situations
+            const today = new Date();
+            const startDate = new Date('2024-01-01'); // Date de référence
+            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            const dayIndex = daysSinceStart % dailySituations.length;
+            
+            currentSituation = dailySituations[dayIndex];
+            
+            document.getElementById('dailySituation').textContent = `"${currentSituation.situation}"`;
+            
+            // Charger les options
+            const optionsContainer = document.getElementById('reframingOptions');
+            optionsContainer.innerHTML = '';
+            
+            currentSituation.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'reframe-option';
+                optionDiv.onclick = function() { selectOption(this, index); };
+                optionDiv.innerHTML = `
+                    <span class="option-number">${index + 1}</span>
+                    <span>${option}</span>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+        }
+
+        function updateStatus() {
+            const hour = new Date().getHours();
+            const isOnDuty = (hour >= 6 && hour <= 18); // Exemple: service de jour
+            
+            const badge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            
+            if (isOnDuty) {
+                badge.classList.add('on-duty');
+                statusText.textContent = 'En Service';
+                welcomeMsg.textContent = 'Restez vigilant, Agent';
+            } else {
+                badge.classList.remove('on-duty');
+                statusText.textContent = 'Hors Service';
+                welcomeMsg.textContent = 'Bon repos, Agent';
+            }
+        }
+
+        function selectOption(element, index) {
+            // Désélectionner toutes les options
+            document.querySelectorAll('.reframe-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Sélectionner l'option cliquée
+            element.classList.add('selected');
+            selectedOptions = [index];
+            
+            // Activer le bouton de validation
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateExercise() {
+            const personalReflection = document.getElementById('personalReflection').value;
+            
+            // Sauvegarder la progression (localStorage pour cet exemple)
+            const today = new Date().toDateString();
+            let progress = JSON.parse(localStorage.getItem('pauseProgress') || '{}');
+            
+            progress[today] = {
+                situation: currentSituation.situation,
+                selectedOptions: selectedOptions,
+                personalReflection: personalReflection,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('pauseProgress', JSON.stringify(progress));
+            
+            // Mettre à jour les stats
+            updateStats();
+            
+            // Afficher le feedback
+            showFeedback();
+            
+            // Désactiver les interactions
+            document.getElementById('validateBtn').disabled = true;
+            document.querySelectorAll('.reframe-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+        }
+
+        function skipExercise() {
+            if (confirm('Êtes-vous sûr de vouloir passer l\'exercice d\'aujourd\'hui ?')) {
+                // Marquer comme passé
+                const today = new Date().toDateString();
+                let progress = JSON.parse(localStorage.getItem('pauseProgress') || '{}');
+                progress[today] = { skipped: true };
+                localStorage.setItem('pauseProgress', JSON.stringify(progress));
+                
+                // Feedback différent
+                const feedback = document.getElementById('feedbackSection');
+                feedback.querySelector('.feedback-icon').textContent = '💪';
+                feedback.querySelector('.feedback-message').textContent = 'Pas de problème !';
+                feedback.querySelector('.feedback-submessage').textContent = 'Prenez soin de vous. L\'exercice vous attend demain.';
+                feedback.classList.add('show');
+            }
+        }
+
+        function showFeedback() {
+            const feedbackMessages = [
+                { icon: '🎯', message: 'Excellent travail !', submessage: 'Vous développez votre flexibilité mentale. C\'est un atout majeur en situation opérationnelle.' },
+                { icon: '💪', message: 'Bien joué !', submessage: 'Chaque reframing renforce votre résilience mentale.' },
+                { icon: '🛡️', message: 'Mission accomplie !', submessage: 'Vous construisez un mental d\'acier, exercice après exercice.' },
+                { icon: '⭐', message: 'Parfait !', submessage: 'Votre capacité d\'adaptation est votre meilleure protection.' }
+            ];
+            
+            const randomFeedback = feedbackMessages[Math.floor(Math.random() * feedbackMessages.length)];
+            const feedback = document.getElementById('feedbackSection');
+            
+            feedback.querySelector('.feedback-icon').textContent = randomFeedback.icon;
+            feedback.querySelector('.feedback-message').textContent = randomFeedback.message;
+            feedback.querySelector('.feedback-submessage').textContent = randomFeedback.submessage;
+            
+            feedback.classList.add('show');
+        }
+
+        function updateStats() {
+            const progress = JSON.parse(localStorage.getItem('pauseProgress') || '{}');
+            const dates = Object.keys(progress).filter(date => !progress[date].skipped);
+            
+            // Calculer la série actuelle
+            let streak = 0;
+            const today = new Date();
+            for (let i = 0; i < 30; i++) {
+                const checkDate = new Date(today);
+                checkDate.setDate(today.getDate() - i);
+                if (progress[checkDate.toDateString()] && !progress[checkDate.toDateString()].skipped) {
+                    streak++;
+                } else if (i > 0) {
+                    break;
+                }
+            }
+            
+            document.getElementById('streakCount').textContent = streak;
+            document.getElementById('totalReframed').textContent = dates.length;
+            
+            // Score de résilience basé sur la régularité
+            const resilienceScore = Math.min(100, 50 + (streak * 5) + (dates.length * 2));
+            document.getElementById('resilienceScore').textContent = resilienceScore + '%';
+        }
+
+        function loadProgress() {
+            const progress = JSON.parse(localStorage.getItem('pauseProgress') || '{}');
+            const today = new Date().toDateString();
+            
+            // Vérifier si l'exercice d'aujourd'hui est déjà fait
+            if (progress[today] && !progress[today].skipped) {
+                document.getElementById('validateBtn').disabled = true;
+                document.getElementById('validateBtn').textContent = '✓ Complété';
+                showFeedback();
+            }
+            
+            updateStats();
+        }
+
+        function showGuide() {
+            document.getElementById('guideModal').style.display = 'block';
+        }
+
+        function closeGuide() {
+            document.getElementById('guideModal').style.display = 'none';
+        }
+
+        // Fermer le guide en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const modal = document.getElementById('guideModal');
+            if (event.target === modal) {
+                closeGuide();
+            }
+        }
+    </script>
+</body>
+</html>
